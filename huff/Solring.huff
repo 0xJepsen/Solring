@@ -1,0 +1,12 @@
+#define function set(uint256,bytes32) nonpayable returns (uint256)
+
+#define macro MAIN() = {
+   // Load our numbers from calldata and add them together.
+   0x04 calldataload // [number1]
+   0x24 calldataload // [number2]
+   add               // [number1+number2]
+
+   // Return our new number.
+   0x00 mstore // Store our number in memory.
+   0x20 0x00 return // Return it.
+}
