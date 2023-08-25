@@ -8,6 +8,8 @@ uint256 constant RING_SIZE = 32;
 library RingLib {
     function set(bytes32[RING_SIZE] storage ring, uint256 index, bytes32 hash) internal {
         assembly {
+            // Wrap `index` via bit masking (equivalent to `mod RING_SIZE` for RING_SIZE that's
+            // a power of 2)
             let relIndex := and(index, sub(shl(RING_BITS, 1), 1))
             sstore(add(ring.slot, relIndex), hash)
         }
@@ -15,7 +17,10 @@ library RingLib {
 
     function get(bytes32[RING_SIZE] storage ring, uint256 index) internal view returns (bytes32 hash) {
         assembly {
-            hash := sload(add(ring.slot, and(index, sub(shl(RING_BITS, 1), 1))))
+            // Wrap `index` via bit masking (equivalent to `mod RING_SIZE` for RING_SIZE that's
+            // a power of 2)
+            let relIndex := and(index, sub(shl(RING_BITS, 1), 1))
+            hash := sload(add(ring.slot, relIndex))
         }
     }
 }
